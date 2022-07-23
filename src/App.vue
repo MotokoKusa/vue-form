@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import SMain from "@/components/sections/s_main";
+import SMain from "@/components/sections/s_main/s_main";
 export default {
   name: "App",
   components: {
