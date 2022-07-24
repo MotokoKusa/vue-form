@@ -174,6 +174,7 @@ export default {
         city_id: this.formValues.city?.id,
       });
 
+      console.log(this.isNotValidForm);
       if (this.isNotValidForm) {
         this.$store.state.popupForm.visible = false;
         this.$store.state.popupMessage = true;
@@ -183,9 +184,6 @@ export default {
         this.select = "Выберите город";
       } else {
         this.$store.state.popupMessage = true;
-        setTimeout(() => {
-          this.$store.state.popupMessage = false;
-        }, 1000);
       }
     },
   },

@@ -35,18 +35,27 @@ export default new Vuex.Store({
   },
   mutations: {
     infoFromForm(state, message) {
-      state.message = message.data;
+      state.message = message;
     },
   },
   actions: {
     async sendInfoFromForm(ctx, payload) {
       let urlApi = "http://hh.autodrive-agency.ru/test-tasks/front/task-7/";
+      const EMPTY_DATA = "Не удалось отправить форму";
       try {
-        const message = await axios.post(urlApi, payload);
-        ctx.commit("infoFromForm", message);
+        const response = await axios.post(urlApi, payload);
+        if (response.data) {
+          ctx.commit("infoFromForm", response.data);
+        } else {
+          ctx.commit("infoFromForm", EMPTY_DATA);
+        }
       } catch (e) {
-        const error = e.response;
-        ctx.commit("infoFromForm", error);
+        if (e.response.data) {
+          const error = e.response.data;
+          ctx.commit("infoFromForm", error);
+        } else {
+          ctx.commit("infoFromForm", EMPTY_DATA);
+        }
       }
     },
   },
