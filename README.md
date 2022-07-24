@@ -1,24 +1,50 @@
 # vue-form
 
-## Project setup
-```
-yarn install
+## Как установить проект
+
+Используется node версии 18.6.0 (если не установлена node то устанавливаем)
+
+Через github:
+
+1) Клонируем проект
+2) Переходим в папку с проектом
+3) Устанавливаем зависимости
+4) Запускаем проект
+
+``` shell
+git clone https://github.com/MotokoKusa/vue-form.git
+cd vue-form
+npm install
+npm run serve
 ```
 
-### Compiles and hot-reloads for development
-```
-yarn serve
+С помощью архива:
+
+1) Распаковываем архив
+2) Открываем папку с проектом
+3) Устанавливаем зависимости
+4) Запускаем проект
+
+``` shell
+cd vue-form
+npm install
+npm run serve
 ```
 
-### Compiles and minifies for production
-```
-yarn build
-```
+## Какие зависимости там есть
 
-### Lints and fixes files
-```
-yarn lint
-```
+В проекте используется:
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+- [Prettier](https://prettier.io/) — инструмент для автоформатирования кода
+
+- [ESLint](https://eslint.org) — это утилита, которая может анализировать написанный код. Фактически, это статический
+  анализатор кода, и он может находить синтаксические ошибки, баги или неточности форматирования
+
+## Файловая структура проекта
+
+Папка `assets/` - содержит нескомпилированные файлы с исходным кодом.
+
+Папка `components/` - содержит компоненты Vue.js для приложения.
+
+Папка `store/` - содержит файлы [Vuex хранилища](http://vuex.vuejs.org/).
+
