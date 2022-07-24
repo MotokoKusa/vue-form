@@ -3,6 +3,7 @@
     <div class="bg-gray-500 opacity-75 w-screen h-screen"></div>
     <div
       class="m_popup-form__box rounded w-[20rem] md:w-[42rem] lg:w-[49.5rem] absolute bg-white translate-y-[-50%] translate-x-[-50%] left-[50%] top-[50%] p-6"
+      :class="{ hidden: this.$store.state.popupMessage }"
     >
       <h2 class="text-2xl mb-9">Заказать звонок</h2>
       <AButton
@@ -14,7 +15,7 @@
         @submit.prevent="sendValuesForm"
         type="submit"
         method="post"
-        class="flex flex-wrap gap-5 justify-between items-end"
+        class="flex flex-wrap gap-5 justify-between"
       >
         <label class="block w-full md:w-[12rem] lg:w-[10.6rem]">
           <span class="block mb-1 text-base">Телефон*</span>
@@ -75,7 +76,7 @@
         </label>
         <button
           @submit.prevent="sendValuesForm"
-          class="bg-green-600 w-full md:w-[11.7rem] md:h-10 lg:w-[10.6rem] lg:ml-auto px-4 py-2 rounded-md text-white"
+          class="self-end bg-green-600 w-full md:w-[11.7rem] md:h-10 lg:w-[10.6rem] lg:ml-auto px-4 py-2 rounded-md text-white"
           type="submit"
         >
           Отправить
@@ -86,7 +87,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import AButton from "@/components/atoms/a_button/a_button";
 
 export default {
@@ -100,7 +101,7 @@ export default {
         name: { value: "", valid: true },
         phone: { value: "", valid: true },
         email: { value: "", valid: true },
-        city: { id: null, value: "" },
+        city: { id: null, value: "", valid: true },
       },
       closeBtn: "&#10006;",
       name: "",
@@ -119,48 +120,73 @@ export default {
     validatePhone() {
       return this.phoneValue.length === 12;
     },
+    isNotValidForm() {
+      for (let key in this.formValues) {
+        if (this.formValues[key].valid === false) {
+          return false;
+        }
+      }
+      return true;
+    },
   },
   methods: {
-    closePopups() {
-      this.$store.state.popupForm.visible = false;
-    },
-    sendValuesForm() {
+    ...mapActions(["sendInfoFromForm"]),
+    checkValidPhone() {
       if (this.validatePhone) {
         this.formValues.phone.valid = true;
         this.formValues.phone.value = this.phoneValue;
       } else {
         this.formValues.phone.valid = false;
       }
-
+    },
+    checkValidEmail() {
       if (this.validateEmail) {
         this.formValues.email.valid = true;
         this.formValues.email.value = this.email;
       } else {
         this.formValues.email.valid = false;
       }
-
+    },
+    checkValidName() {
       if (this.name) {
         this.formValues.name.valid = true;
         this.formValues.name.value = this.name;
       } else {
         this.formValues.name.valid = false;
       }
+    },
+    closePopups() {
+      this.$store.state.popupForm.visible = false;
+    },
+    sendValuesForm() {
+      this.checkValidPhone();
+      this.checkValidEmail();
+      this.checkValidName();
+
       this.formValues.city = this.getListTowns.find((el) => {
         return el.name === this.select;
       });
 
-      this.$store.dispatch("sendInfoFromForm", {
+      this.sendInfoFromForm({
         name: this.formValues.name.value,
         phone: this.formValues.phone.value,
         email: this.formValues.email.value,
-        city_id: this.formValues.city.id,
+        city_id: this.formValues.city?.id,
       });
-      this.$store.state.popupForm.visible = false;
-      this.$store.state.popupMessage = true;
-      this.name = "";
-      this.phone = "";
-      this.email = "";
-      this.select = "Выберите город";
+
+      if (this.isNotValidForm) {
+        this.$store.state.popupForm.visible = false;
+        this.$store.state.popupMessage = true;
+        this.name = "";
+        this.phone = "";
+        this.email = "";
+        this.select = "Выберите город";
+      } else {
+        this.$store.state.popupMessage = true;
+        setTimeout(() => {
+          this.$store.state.popupMessage = false;
+        }, 1000);
+      }
     },
   },
   watch: {
@@ -182,7 +208,6 @@ export default {
       this.phone = newVal;
     },
   },
-
   mounted() {
     if (this.$store.state.popupForm.value) {
       this.select = this.$store.state.popupForm.value;
